@@ -1,0 +1,2 @@
+QTSERIALPORT_PROJECT_ROOT = /home/billaros/serialport/qtserialport
+QTSERIALPORT_BUILD_ROOT = /home/billaros/serialport/qtserialport-build
