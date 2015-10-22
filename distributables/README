@@ -1,0 +1,7 @@
+prwta to stikaki twn tsexwn
+cd /home/billaros/eudemo
+../jdk1.8.0_25/bin/java -jar RegistryUnit/dist/RegistryUnit.jar &
+java net.tinyos.sf.SerialForwarder -comm serial@/dev/ttyUSB2:micaz&
+../jdk1.8.0_25/bin/java -jar Osciloscope/dist/Osciloscope.jar &
+cd /home/billaros/Documents/build-HTTPServer-qt5-Debug/
+./HTTPServer &
