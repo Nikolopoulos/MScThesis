@@ -129,21 +129,21 @@ public class MicazMote {
 
     public String JSONDescription() {
         //return "{"+id+"\t Micaz provides: " + (tempService?"temperature service ":"")+ (photoService?"photo service ":"") + (switchService?"switch service ":"") ;
-        String reply = "{\"ID\":\"" + getId() + ", \"TemperatureService\":\"" + this.isTempService() + "\", \"LightService\":\"" + this.isPhotoService() + "\", \"SwitchService\":\"" + this.isSwitchService() + "\"} ";
+        String reply = "{\"ID\":\"" + getId() + "\", \"TemperatureService\":\"" + this.isTempService() + "\", \"LightService\":\"" + this.isPhotoService() + "\", \"SwitchService\":\"" + this.isSwitchService() + "\"} ";
         return reply;
     }
 
     public String JSONObject() {
-       String reply = "\"ID\":\"" + getId() + ", \"TemperatureService\":\"" + this.isTempService() + "\", \"LightService\":\"" + this.isPhotoService() + "\", \"SwitchService\":\"" + this.isSwitchService() + "\", \"Temperature\":\"" + this.getTempReading() + "\", \"Light\":\"" + this.getPhotoReading() + "\", \"Switch\":\"" + this.getSwitchState() + "\" ";
+       String reply = "\"ID\":\"" + getId() + "\", \"TemperatureService\":\"" + this.isTempService() + "\", \"LightService\":\"" + this.isPhotoService() + "\", \"SwitchService\":\"" + this.isSwitchService() + "\", \"Temperature\":\"" + util.util.a2d2celsius((int)this.getTempReading()) + "\", \"Light\":\"" + this.getPhotoReading() + "\", \"Switch\":\"" + this.getSwitchState() + "\" ";
         return reply;
     }
     
     public String JSONLight() {
-        String reply = "\"ID\":\"" + getId() + ", \"Light\":\"" + this.getPhotoReading() + "\" ";
+        String reply = "\"ID\":\"" + getId() + "\", \"Light\":\"" + this.getPhotoReading() + "\" ";
         return reply;
     }
     public String JSONTemp() {
-        String reply = "\"ID\":\"" + getId() + ", \"Temperature\":\"" + this.getTempReading()+ "\" ";
+        String reply = "\"ID\":\"" + getId() + "\", \"Temperature\":\"" + util.util.a2d2celsius((int)this.getTempReading())+ "\" ";
         return reply;
     }
 

@@ -45,6 +45,7 @@ public class Aggregator {
     public Aggregator(String IP, int Port) {
         this.IP = IP;
         this.Port = Port;
+        this.services = new ArrayList<Service>();
     }
 
     public String getIP() {

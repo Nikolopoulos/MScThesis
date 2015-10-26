@@ -25,6 +25,8 @@ public class Universe {
         services = new HashMap();
         myServer = new server(this);
         myServer.startServer();
+        aggregators = new ArrayList<Aggregator>();
+        comms = new ArrayList<Communication>();
     }
 
 }

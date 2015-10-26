@@ -51,10 +51,10 @@ class doComms implements Runnable {
             }
             String reply = "";
             if (requestedURL.equals("/")) {
-                reply = "aggregatorIP:8181/sensors -> returns a list of sensors available\n"
-                        + "aggregatorIP:8181/sensor/ID -> returns data of specific sensor with id = ID\n"
-                        + "aggregatorIP:8181/sensor/ID/light|temp -> returns data about light|temperature of specific sensor with id = ID\n"
-                        + "aggregatorIP:8181/sensor/ID/switch toggles the switch available on the sensor node and returns the state of the sensor node as if aggregatorIP:8181/sensor/ID was called";
+                reply = "127.0.0.1:8181/sensors -> returns a list of sensors available\n"
+                        + "127.0.0.1:8181/sensor/ID -> returns data of specific sensor with id = ID\n"
+                        + "127.0.0.1:8181/sensor/ID/light|temp -> returns data about light|temperature of specific sensor with id = ID\n"
+                        + "127.0.0.1:8181/sensor/ID/switch toggles the switch available on the sensor node and returns the state of the sensor node as if 127.0.0.1:8181/sensor/ID was called";
             } else if (requestedURL.startsWith("/sensors")) {
                 reply = "{\"sensors\":{[";
                 for (MicazMote m : con.getMotesList()) {
@@ -66,10 +66,10 @@ class doComms implements Runnable {
                 reply += "]}";
             } else if (requestedURL.startsWith("/sensor/") && (!requestedURL.contains("light")) && (!requestedURL.contains("temp")) && (!requestedURL.contains("switch"))) {
                 if (requestedURL.length() < 9) {
-                    reply = "aggregatorIP:8181/sensors -> returns a list of sensors available\n"
-                            + "aggregatorIP:8181/sensor/ID -> returns data of specific sensor with id = ID\n"
-                            + "aggregatorIP:8181/sensor/ID/light|temp -> returns data about light|temperature of specific sensor with id = ID\n"
-                            + "aggregatorIP:8181/sensor/ID/switch toggles the switch available on the sensor node and returns the state of the sensor node as if aggregatorIP:8181/sensor/ID was called";
+                    reply = "127.0.0.1:8181/sensors -> returns a list of sensors available\n"
+                            + "127.0.0.1:8181/sensor/ID -> returns data of specific sensor with id = ID\n"
+                            + "127.0.0.1:8181/sensor/ID/light|temp -> returns data about light|temperature of specific sensor with id = ID\n"
+                            + "127.0.0.1:8181/sensor/ID/switch toggles the switch available on the sensor node and returns the state of the sensor node as if 127.0.0.1:8181/sensor/ID was called";
 
                 } else {
                     int ID = Integer.parseInt(requestedURL.split("/")[2]);

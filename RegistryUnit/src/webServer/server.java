@@ -9,6 +9,8 @@ import Infrastructure.Universe;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -37,6 +39,7 @@ public class server {
                     Socket server;
                     while ((i++ < maxConnections) || (maxConnections == 0)) {
                         server = listener.accept();
+                        //server.getOutputStream().write('Q');
                         doComms conn_c = new doComms(server,universe);
                         Thread clientConnectionThread = new Thread(conn_c);
                         clientConnectionThread.setName("clientConnectionThread" + i);

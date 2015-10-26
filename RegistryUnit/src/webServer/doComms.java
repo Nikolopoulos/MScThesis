@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -34,13 +36,38 @@ class doComms implements Runnable {
         input = "";
         noBreakInput = "";
         requestedURL = "";
+        int emptyLines=0;
         try {
+            System.out.println("test -2 doComms");
             // Get input from the client
             InputStream ins = server.getInputStream();
             //DataInputStream in = new DataInputStream(ins);
             PrintStream out = new PrintStream(server.getOutputStream());
+            
+            System.out.println("sending test message");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(doComms.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            out.flush();
+            //out.print("testmessage");
+            System.out.println("sent");
             int lineNumber = 1;
+            System.out.println("test -1 doComms");
             while ((line = readLine(ins)) != null) {
+                if(line.length()>0)
+                {
+                    emptyLines=0;
+                }
+                else{
+                    emptyLines++;
+                }
+                if(emptyLines>2)
+                {
+                    break;
+                }
+                System.out.println("test 0 doComms");
                 if (lineNumber == 1) {
                     int urlEnd = line.indexOf(" HTTP/1.1");
                     requestedURL = line.substring(4, urlEnd);
@@ -51,7 +78,7 @@ class doComms implements Runnable {
 
                 System.out.println(line);
                 if (line.startsWith("Content-Length: ")) {
-                    line = "Params: "+readChars(ins, Integer.parseInt(line.substring(16)));
+                    line = "Params: "+readChars(ins, Integer.parseInt(line.substring("Content-Length: ".length())));
                     input = input + line + "\n";
                     noBreakInput = noBreakInput + line;
                     lineNumber++;
@@ -61,11 +88,15 @@ class doComms implements Runnable {
 
             }
             Request request = new Request();
+            System.out.println("test 1 doComms");
             request.parseRequest(input);
+            System.out.println("test 2 doComms");
             request.setClient(server.getInetAddress().toString()+":"+server.getPort());
-            Tassadar executor = new Tassadar(request,out,universe);
+            System.out.println("test 3 doComms");
+            Tassadar executor = new Tassadar(request,out,universe,server);
+            System.out.println("test 4 doComms");
             executor.execute();
-            server.close();
+            //server.close();
         } catch (IOException ioe) {
             System.out.println("IOException on socket listen: " + ioe);
             ioe.printStackTrace();
