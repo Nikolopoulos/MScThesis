@@ -14,14 +14,14 @@ import util.Control;
  *
  * @author billaros
  */
-public class server {
+public class Server {
 
     private static int port = 8181,
                        maxConnections = 0;
     // Listen for incoming connections and handle them
     final Control finalControl;
 
-    public server(Control c) {
+    public Server(Control c) {
         
         this.finalControl = c;
 
@@ -38,7 +38,7 @@ public class server {
                     Socket server;
                     while ((i++ < maxConnections) || (maxConnections == 0)) {
                         server = listener.accept();
-                        doComms conn_c = new doComms(server, finalControl);
+                        DoComms conn_c = new DoComms(server, finalControl);
                         Thread clientConnectionThread = new Thread(conn_c);
                         clientConnectionThread.setName("clientConnectionThread"+i);
                         clientConnectionThread.start();

@@ -6,7 +6,7 @@
 package oscilloscope;
 
 import util.Control;
-import webServer.server;
+import webServer.Server;
 
 /**
  *
@@ -17,7 +17,7 @@ public class Conductor {
         Control c = new Control();
         //mainFrame f = new mainFrame(c);
         //f.setVisible(true);
-        server myServer = new server(c);
+        Server myServer = new Server(c);
         myServer.startServer();
     }
 }

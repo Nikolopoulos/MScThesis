@@ -5,13 +5,18 @@
  */
 package util;
 
+import java.net.Inet4Address;
+import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONObject;
-import oscilloscope.messaging;
+import oscilloscope.Messaging;
 import sensorPlatforms.MicazMote;
 
 /**
@@ -21,17 +26,19 @@ import sensorPlatforms.MicazMote;
 public class Control {
 
     ArrayList<MicazMote> motesList;
-    messaging Messages = new messaging(this);
+    Messaging messages;
     Thread dropDaemon, populate;
     String uid = "";
 
     public Control() {
 
         String jsonReply = "";
+       
         try {
-            InetAddress addr = InetAddress.getLocalHost();
-            String ip = addr.getHostAddress();
-            jsonReply = httpRequest.sendPost("http://127.0.0.1", 8383, URLEncoder.encode("ip="+ip+"&port=8181&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register");
+            InetAddress addr = getFirstNonLoopbackAddress(true,false);
+            String ip = addr.getHostAddress();            
+            //messages = new Messaging(this);
+            jsonReply = HTTPRequest.sendPost("http://"+ip, 8383, URLEncoder.encode("ip="+ip+"&port=8181&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register");
             System.out.println("reply is: " + jsonReply);
             JSONObject obj;
 
@@ -65,7 +72,7 @@ public class Control {
                 while (true) {
                     for (MicazMote m : motesList) {
 
-                        if (m.getLatestActivity() < util.getTime() - 10000) {
+                        if (m.getLatestActivity() < Util.getTime() - 10000) {
                             System.out.println("dropin " + m);
 
                             toRemove.add(m);
@@ -90,7 +97,7 @@ public class Control {
                             }
                             services += "]}";
                             System.out.println("My uid at update is " + uid);
-                            String jsonReply = httpRequest.sendPost("http://127.0.0.1", 8383, URLEncoder.encode("uid=" + uid + "&services=" + services), "/delete");
+                            String jsonReply = HTTPRequest.sendPost("http://127.0.0.1", 8383, URLEncoder.encode("uid=" + uid + "&services=" + services), "/delete");
                             System.out.println("reply is: " + jsonReply);
                             JSONObject obj;
 
@@ -102,7 +109,7 @@ public class Control {
                         //sendDeleteRequestToRU
                     }
                     toRemove.clear();
-                    //System.out.println("CurrentTime " + util.getTime());
+                    //System.out.println("CurrentTime " + Util.getTime());
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException ex) {
@@ -118,7 +125,7 @@ public class Control {
         boolean found = false;
         for (MicazMote m : motesList) {
             if (m.getId() == mote.getId()) {
-                m.setLatestActivity(util.getTime());
+                m.setLatestActivity(Util.getTime());
                 found = true;
                 break;
             }
@@ -142,7 +149,7 @@ public class Control {
                     }
                     services += "]}";
                     System.out.println("My uid at update is " + uid);
-                    jsonReply = httpRequest.sendPost("http://127.0.0.1", 8383, URLEncoder.encode("uid=" + uid + "&services=" + services), "/update");
+                    jsonReply = HTTPRequest.sendPost("http://127.0.0.1", 8383, URLEncoder.encode("uid=" + uid + "&services=" + services), "/update");
                     System.out.println("reply is: " + jsonReply);
                     JSONObject obj;
 
@@ -160,11 +167,11 @@ public class Control {
             if (m.getId() == id) {
                 switch (messageType) {
                     case lib.Constants.TEMP: {
-                        m.setTempReading(util.median(Readings));
+                        m.setTempReading(Util.median(Readings));
                         break;
                     }
                     case lib.Constants.PHOTO: {
-                        m.setPhotoReading(util.median(Readings));
+                        m.setPhotoReading(Util.median(Readings));
                         break;
                     }
                     default: {
@@ -180,7 +187,7 @@ public class Control {
     public void reportSwitch(int id, int state) {
         for (MicazMote m : motesList) {
             if (m.getId() == id) {
-                m.setLatestActivity(util.getTime());
+                m.setLatestActivity(Util.getTime());
                 m.setSwitchState(state);
                 System.out.println("State changed to " + state);
             }
@@ -206,24 +213,49 @@ public class Control {
     }
 
     public void sendPoll() {
-        Messages.sendPoll();
+        messages.sendPoll();
     }
 
     ;
     public void getSwitchInfo(int id) {
-        Messages.sendSwitchPoll(id);
+        messages.sendSwitchPoll(id);
     }
 
     public void toggleSwitch(int id) {
-        Messages.sendSwitchToggle(id);
+        messages.sendSwitchToggle(id);
     }
 
     public void sendReadingRequest(int id, int type) {
-        Messages.sendReadingRequest(id, type);
+        messages.sendReadingRequest(id, type);
     }
 
     public ArrayList<MicazMote> getMotesList() {
         return motesList;
     }
+    //courtesy of How to get the ip of the computer on linux through Java? -> http://stackoverflow.com/questions/901755/how-to-get-the-ip-of-the-computer-on-linux-through-java
+    private static InetAddress getFirstNonLoopbackAddress(boolean preferIpv4, boolean preferIPv6) throws SocketException {
+    Enumeration en = NetworkInterface.getNetworkInterfaces();
+    while (en.hasMoreElements()) {
+        NetworkInterface i = (NetworkInterface) en.nextElement();
+        for (Enumeration en2 = i.getInetAddresses(); en2.hasMoreElements();) {
+            InetAddress addr = (InetAddress) en2.nextElement();
+            if (!addr.isLoopbackAddress()) {
+                if (addr instanceof Inet4Address) {
+                    if (preferIPv6) {
+                        continue;
+                    }
+                    return addr;
+                }
+                if (addr instanceof Inet6Address) {
+                    if (preferIpv4) {
+                        continue;
+                    }
+                    return addr;
+                }
+            }
+        }
+    }
+    return null;
+}
 
 }

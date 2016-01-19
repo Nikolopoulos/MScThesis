@@ -9,7 +9,7 @@ package util;
  *
  * @author billaros
  */
-public class util {
+public class Util {
 
     public static int sum(int[] array) {
         int summary = 0;

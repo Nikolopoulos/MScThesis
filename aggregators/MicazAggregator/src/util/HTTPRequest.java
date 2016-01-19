@@ -18,7 +18,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.URL;
 
-public class httpRequest {
+public class HTTPRequest {
 
     private static final String USER_AGENT = "Mozilla/5.0";
 

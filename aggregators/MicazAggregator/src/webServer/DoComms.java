@@ -19,13 +19,13 @@ import util.Control;
  *
  * @author billaros
  */
-class doComms implements Runnable {
+class DoComms implements Runnable {
 
     private Socket server;
     private String line, input, requestedURL, noBreakInput;
     private final Control con;
 
-    doComms(Socket server, Control c) {
+    DoComms(Socket server, Control c) {
         this.server = server;
         this.con = c;
     }
@@ -77,19 +77,19 @@ class doComms implements Runnable {
                     try {
                         sleep(1000);
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(doComms.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(DoComms.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     con.sendReadingRequest(ID, lib.Constants.PHOTO);
                     try {
                         sleep(1000);
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(doComms.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(DoComms.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     con.getSwitchInfo(ID);
                     try {
                         sleep(1000);
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(doComms.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(DoComms.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     reply = "{\"sensor\":{";
                     for (MicazMote m : con.getMotesList()) {
@@ -106,7 +106,7 @@ class doComms implements Runnable {
                 try {
                     sleep(1000);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(doComms.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(DoComms.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 reply = "{\"sensor\":{";
                 for (MicazMote m : con.getMotesList()) {
@@ -122,7 +122,7 @@ class doComms implements Runnable {
                 try {
                     sleep(1000);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(doComms.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(DoComms.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 reply = "{\"sensor\":{";
                 for (MicazMote m : con.getMotesList()) {
@@ -138,7 +138,7 @@ class doComms implements Runnable {
                 try {
                     sleep(1000);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(doComms.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(DoComms.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 reply = "{\"sensor\":{";
                 for (MicazMote m : con.getMotesList()) {

@@ -16,12 +16,12 @@ import util.Control;
  *
  * @author billaros
  */
-public class messaging implements MessageListener {
+public class Messaging implements MessageListener {
 
     MoteIF mote;
     Control c;
     
-    public messaging(Control c) {
+    public Messaging(Control c) {
         this.c=c;
         mote = new MoteIF(PrintStreamMessenger.err);
         mote.registerListener(new Poll_Answer(), this);
@@ -89,7 +89,7 @@ public class messaging implements MessageListener {
         if (msg instanceof Poll_Answer) {
             //System.out.println("POLL ANSWER" + msg);
             Poll_Answer cmsg = (Poll_Answer) msg;
-            MicazMote mote = new MicazMote(cmsg.get_id(), cmsg.get_services(),util.util.getTime());
+            MicazMote mote = new MicazMote(cmsg.get_id(), cmsg.get_services(),util.Util.getTime());
             c.reportPollAck(mote);
         }
         else if(msg instanceof ReadingMsgAnswer) {

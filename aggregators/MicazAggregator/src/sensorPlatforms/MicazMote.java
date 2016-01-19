@@ -134,7 +134,7 @@ public class MicazMote {
     }
 
     public String JSONObject() {
-       String reply = "\"ID\":\"" + getId() + "\", \"TemperatureService\":\"" + this.isTempService() + "\", \"LightService\":\"" + this.isPhotoService() + "\", \"SwitchService\":\"" + this.isSwitchService() + "\", \"Temperature\":\"" + util.util.a2d2celsius((int)this.getTempReading()) + "\", \"Light\":\"" + this.getPhotoReading() + "\", \"Switch\":\"" + this.getSwitchState() + "\" ";
+       String reply = "\"ID\":\"" + getId() + "\", \"TemperatureService\":\"" + this.isTempService() + "\", \"LightService\":\"" + this.isPhotoService() + "\", \"SwitchService\":\"" + this.isSwitchService() + "\", \"Temperature\":\"" + util.Util.a2d2celsius((int)this.getTempReading()) + "\", \"Light\":\"" + this.getPhotoReading() + "\", \"Switch\":\"" + this.getSwitchState() + "\" ";
         return reply;
     }
     
@@ -143,7 +143,7 @@ public class MicazMote {
         return reply;
     }
     public String JSONTemp() {
-        String reply = "\"ID\":\"" + getId() + "\", \"Temperature\":\"" + util.util.a2d2celsius((int)this.getTempReading())+ "\" ";
+        String reply = "\"ID\":\"" + getId() + "\", \"Temperature\":\"" + util.Util.a2d2celsius((int)this.getTempReading())+ "\" ";
         return reply;
     }
 
