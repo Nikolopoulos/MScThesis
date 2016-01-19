@@ -5,6 +5,7 @@
  */
 package oscilloscope;
 
+import gui.mainFrame;
 import util.Control;
 import webServer.Server;
 
@@ -13,10 +14,13 @@ import webServer.Server;
  * @author billaros
  */
 public class Conductor {
-      public static void main(String args[]){
-        Control c = new Control();
-        //mainFrame f = new mainFrame(c);
-        //f.setVisible(true);
+
+    public static void main(String args[]) {
+        Control c = new Control(true);
+        if (args[1].equals("debug")) {
+            mainFrame f = new mainFrame(c);
+            f.setVisible(true);
+        }
         Server myServer = new Server(c);
         myServer.startServer();
     }

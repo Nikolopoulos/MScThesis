@@ -29,30 +29,42 @@ public class Control {
     Messaging messages;
     Thread dropDaemon, populate;
     String uid = "";
+    boolean debug;
 
-    public Control() {
-
+    public Control(boolean debug) {
+        this.debug = debug;
         String jsonReply = "";
-       
+
         try {
-            InetAddress addr = getFirstNonLoopbackAddress(true,false);
-            String ip = addr.getHostAddress();            
-            //messages = new Messaging(this);
-            jsonReply = HTTPRequest.sendPost("http://"+ip, 8383, URLEncoder.encode("ip="+ip+"&port=8181&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register");
-            System.out.println("reply is: " + jsonReply);
+            InetAddress addr = getFirstNonLoopbackAddress(true, false);
+            String ip = addr.getHostAddress();
+            String registryUnitIP = "127.0.0.1";
+            messages = new Messaging(this);
+            jsonReply = HTTPRequest.sendPost("http://" + registryUnitIP, 8383, URLEncoder.encode("ip=" + ip + "&port=8181&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register");
+            //registers itself to the registry unit
+
+            if (debug) {
+                System.out.println("reply is: " + jsonReply);
+            }
             JSONObject obj;
 
             obj = new JSONObject(jsonReply);
 
             if (!obj.get("result").equals("success")) {
-                System.out.println("jsonReply failed " + jsonReply);
+                if (debug) {
+                    System.out.println("jsonReply failed " + jsonReply);
+                }
             } else {
                 uid = obj.getString("uid");
-                System.out.println("myUID is " + uid);
+                if (debug) {
+                    System.out.println("myUID is " + uid);
+                }
             }
 
         } catch (Exception e) {
-            System.out.println(jsonReply);
+            if (debug) {
+                System.out.println(jsonReply);
+            }
             e.printStackTrace();
         }
         motesList = new ArrayList<MicazMote>();
@@ -68,16 +80,22 @@ public class Control {
             @Override
             public void run() {
                 ArrayList<MicazMote> toRemove = new ArrayList<MicazMote>();
-                System.out.println("Drop daemon started");
+                if (debug) {
+                    System.out.println("Drop daemon started");
+                }
                 while (true) {
                     for (MicazMote m : motesList) {
 
                         if (m.getLatestActivity() < Util.getTime() - 10000) {
-                            System.out.println("dropin " + m);
+                            if (debug) {
+                                System.out.println("dropin " + m);
+                            }
 
                             toRemove.add(m);
                         } else {
-                            //System.out.println("Latest activity " + m.getLatestActivity());
+                            if (debug) {
+                                System.out.println("Latest activity " + m.getLatestActivity());
+                            }
 
                         }
                     }
@@ -96,9 +114,13 @@ public class Control {
                                 services += ",{\"uri\" : \"/sensor/" + m.getId() + "/switch\", \"description\" : \"switch toggles the switch available on the sensor node and returns the state of the sensor node as if aggregatorIP:8181/sensor/" + m.getId() + " was called\"}";
                             }
                             services += "]}";
-                            System.out.println("My uid at update is " + uid);
+                            if (debug) {
+                                System.out.println("My uid at update is " + uid);
+                            }
                             String jsonReply = HTTPRequest.sendPost("http://127.0.0.1", 8383, URLEncoder.encode("uid=" + uid + "&services=" + services), "/delete");
-                            System.out.println("reply is: " + jsonReply);
+                            if (debug) {
+                                System.out.println("reply is: " + jsonReply);
+                            }
                             JSONObject obj;
 
                             obj = new JSONObject(jsonReply);
@@ -109,7 +131,9 @@ public class Control {
                         //sendDeleteRequestToRU
                     }
                     toRemove.clear();
-                    //System.out.println("CurrentTime " + Util.getTime());
+                    if (debug) {
+                        System.out.println("CurrentTime " + Util.getTime());
+                    }
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException ex) {
@@ -148,9 +172,13 @@ public class Control {
                         services += ",{\"uri\" : \"/sensor/" + mote.getId() + "/switch\", \"description\" : \"switch toggles the switch available on the sensor node and returns the state of the sensor node as if aggregatorIP:8181/sensor/" + mote.getId() + " was called\"}";
                     }
                     services += "]}";
-                    System.out.println("My uid at update is " + uid);
+                    if (debug) {
+                        System.out.println("My uid at update is " + uid);
+                    }
                     jsonReply = HTTPRequest.sendPost("http://127.0.0.1", 8383, URLEncoder.encode("uid=" + uid + "&services=" + services), "/update");
-                    System.out.println("reply is: " + jsonReply);
+                    if (debug) {
+                        System.out.println("reply is: " + jsonReply);
+                    }
                     JSONObject obj;
 
                     obj = new JSONObject(jsonReply);
@@ -189,7 +217,9 @@ public class Control {
             if (m.getId() == id) {
                 m.setLatestActivity(Util.getTime());
                 m.setSwitchState(state);
-                System.out.println("State changed to " + state);
+                if (debug) {
+                    System.out.println("State changed to " + state);
+                }
             }
         }
     }
@@ -232,30 +262,31 @@ public class Control {
     public ArrayList<MicazMote> getMotesList() {
         return motesList;
     }
+
     //courtesy of How to get the ip of the computer on linux through Java? -> http://stackoverflow.com/questions/901755/how-to-get-the-ip-of-the-computer-on-linux-through-java
     private static InetAddress getFirstNonLoopbackAddress(boolean preferIpv4, boolean preferIPv6) throws SocketException {
-    Enumeration en = NetworkInterface.getNetworkInterfaces();
-    while (en.hasMoreElements()) {
-        NetworkInterface i = (NetworkInterface) en.nextElement();
-        for (Enumeration en2 = i.getInetAddresses(); en2.hasMoreElements();) {
-            InetAddress addr = (InetAddress) en2.nextElement();
-            if (!addr.isLoopbackAddress()) {
-                if (addr instanceof Inet4Address) {
-                    if (preferIPv6) {
-                        continue;
+        Enumeration en = NetworkInterface.getNetworkInterfaces();
+        while (en.hasMoreElements()) {
+            NetworkInterface i = (NetworkInterface) en.nextElement();
+            for (Enumeration en2 = i.getInetAddresses(); en2.hasMoreElements();) {
+                InetAddress addr = (InetAddress) en2.nextElement();
+                if (!addr.isLoopbackAddress()) {
+                    if (addr instanceof Inet4Address) {
+                        if (preferIPv6) {
+                            continue;
+                        }
+                        return addr;
                     }
-                    return addr;
-                }
-                if (addr instanceof Inet6Address) {
-                    if (preferIpv4) {
-                        continue;
+                    if (addr instanceof Inet6Address) {
+                        if (preferIpv4) {
+                            continue;
+                        }
+                        return addr;
                     }
-                    return addr;
                 }
             }
         }
+        return null;
     }
-    return null;
-}
 
 }
