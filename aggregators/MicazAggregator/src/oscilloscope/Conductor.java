@@ -5,6 +5,7 @@
  */
 package oscilloscope;
 
+import affinitySupport.ThreadAffinity;
 import gui.mainFrame;
 import util.Control;
 import webServer.Server;
@@ -14,8 +15,12 @@ import webServer.Server;
  * @author billaros
  */
 public class Conductor {
-
+    
+    
+    
+    
     public static void main(String args[]) {
+        
         Control c = new Control(true);
         if (args[1].equals("debug")) {
             mainFrame f = new mainFrame(c);

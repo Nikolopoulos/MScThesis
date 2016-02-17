@@ -32,6 +32,11 @@ class DoComms implements Runnable {
 
     public void run() {
 
+        try {
+            con.HTTPCore.attachTo();
+        } catch (Exception ex) {
+            Logger.getLogger(DoComms.class.getName()).log(Level.SEVERE, null, ex);
+        }
         input = "";
         noBreakInput = "";
         requestedURL = "";

@@ -8,6 +8,8 @@ package webServer;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import util.Control;
 
 /**
@@ -33,6 +35,11 @@ public class Server {
             @Override
             public void run() {
                 try {
+                    try {
+                        finalControl.HTTPCore.attachTo();
+                    } catch (Exception ex) {
+                        Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     int i = 0;
                     ServerSocket listener = new ServerSocket(port);
                     Socket server;
