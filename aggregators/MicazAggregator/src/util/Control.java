@@ -65,6 +65,16 @@ public class Control {
             cronCore = threadAffinity.cores()[0];
         }
 
+        System.out.println("Available cores: " + threadAffinity.cores().length);
+        System.out.println("encryptionCore: " + encryptionCore);
+        System.out.println("HTTPCore: " + HTTPCore);
+        System.out.println("sensingCore: " + sensingCore);
+        System.out.println("cronCore: " + cronCore);
+        encryptionCore.setC(this);
+        HTTPCore.setC(this);
+        sensingCore.setC(this);
+        cronCore.setC(this);
+
         try {
             InetAddress addr = getFirstNonLoopbackAddress(true, false);
             String ip = addr.getHostAddress();
@@ -127,11 +137,8 @@ public class Control {
                             }
 
                             toRemove.add(m);
-                        } else {
-                            if (debug) {
-                                System.out.println("Latest activity " + m.getLatestActivity());
-                            }
-
+                        } else if (debug) {
+                            System.out.println("Latest activity " + m.getLatestActivity());
                         }
                     }
                     for (MicazMote m : toRemove) {

@@ -69,34 +69,36 @@ public class HTTPRequest {
     public static String sendPost(String url, int port, String parameters, String service) throws Exception {
         URL obj = new URL(url);
         byte[] urld = {127, 0, 0, 1};
-        Socket s = new Socket(InetAddress.getByAddress(urld), port);
-        PrintWriter pw = new PrintWriter(s.getOutputStream());
+        try {
+            Socket s = new Socket(InetAddress.getByAddress(urld), port);
 
-        pw.print("POST " + service + " HTTP/1.1\n");
+            PrintWriter pw = new PrintWriter(s.getOutputStream());
 
-        pw.print("User-Agent: Mozilla/5.0\n");
+            pw.print("POST " + service + " HTTP/1.1\n");
 
-        pw.print("Accept-Language: en-US,en;q=0.5\n");
+            pw.print("User-Agent: Mozilla/5.0\n");
 
-        pw.print("Host: 127.0.0.1:8383\n");
+            pw.print("Accept-Language: en-US,en;q=0.5\n");
 
-        pw.print("Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2\n");
+            pw.print("Host: 127.0.0.1:8383\n");
 
-        pw.print("Connection: keep-alive\n");
+            pw.print("Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2\n");
 
-        pw.print("Content-type: application/x-www-form-urlencoded\n");
+            pw.print("Connection: keep-alive\n");
 
-        pw.print("Content-Length: " + parameters.length() + "\n");
-        System.out.println("Content-Length: " + parameters.length() + "\n");
+            pw.print("Content-type: application/x-www-form-urlencoded\n");
 
-        pw.print(parameters);
+            pw.print("Content-Length: " + parameters.length() + "\n");
+            System.out.println("Content-Length: " + parameters.length() + "\n");
 
-        pw.println("");
+            pw.print(parameters);
 
-        pw.flush();
-        //pw.close();
-        BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-        /* br.readLine();
+            pw.println("");
+
+            pw.flush();
+            //pw.close();
+            BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+            /* br.readLine();
          br.readLine();
          br.readLine();
          br.readLine();
@@ -106,20 +108,20 @@ public class HTTPRequest {
          br.readLine();
          br.readLine();
          br.readLine();*/
-        String t = "";
-        String line = "";
-        try {
-            while ((line = br.readLine()) != null) {
-                t += line;
-                System.out.println("Line flush " + t);
-            }
-        } catch (SocketException e) {
+            String t = "";
+            String line = "";
+            try {
+                while ((line = br.readLine()) != null) {
+                    t += line;
+                    System.out.println("Line flush " + t);
+                }
+            } catch (SocketException e) {
                 e.printStackTrace();
-        }
-        System.out.println(t);
-        br.close();
+            }
+            System.out.println(t);
+            br.close();
 
-        /*HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            /*HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
          //add reuqest header
          con.setRequestMethod("POST");
@@ -167,8 +169,11 @@ public class HTTPRequest {
          ex.printStackTrace();
          }
          }*/
-        //print result
-        return t;
+            //print result 
+            return t;
+        } catch (Exception e) {
+            return "{}";
+        }
 
     }
 
