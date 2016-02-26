@@ -13,7 +13,7 @@
 #include <QtSerialPort/QSerialPortInfo>
 #include <QStringList>
 
-typedef struct atmoSensor {
+typedef struct sensor {
   int id;
   int sense1;
   int sense2;
