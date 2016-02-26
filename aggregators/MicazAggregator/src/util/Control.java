@@ -39,11 +39,15 @@ public class Control {
     public final Core cronCore;
 
     public Control(boolean debug) {
+        //Thread affinity class is "Legaly CopyPasted" from a guy that I 
+        //mention on my github on the affinity project
         threadAffinity = new ThreadAffinity(this);
+
         this.debug = debug;
         String jsonReply = "";
 
         if (threadAffinity.cores().length == 4) {
+            //If quadcore etc
             encryptionCore = threadAffinity.cores()[0];
             HTTPCore = threadAffinity.cores()[1];
             sensingCore = threadAffinity.cores()[2];
@@ -59,28 +63,38 @@ public class Control {
             sensingCore = threadAffinity.cores()[0];
             cronCore = threadAffinity.cores()[0];
         } else {
+            //if32core fuck off, use only one core
             encryptionCore = threadAffinity.cores()[0];
             HTTPCore = threadAffinity.cores()[0];
             sensingCore = threadAffinity.cores()[0];
             cronCore = threadAffinity.cores()[0];
         }
 
-        System.out.println("Available cores: " + threadAffinity.cores().length);
-        System.out.println("encryptionCore: " + encryptionCore);
-        System.out.println("HTTPCore: " + HTTPCore);
-        System.out.println("sensingCore: " + sensingCore);
-        System.out.println("cronCore: " + cronCore);
+        if (debug) {
+            System.out.println("Available cores: " + threadAffinity.cores().length);
+            System.out.println("encryptionCore: " + encryptionCore);
+            System.out.println("HTTPCore: " + HTTPCore);
+            System.out.println("sensingCore: " + sensingCore);
+            System.out.println("cronCore: " + cronCore);
+        }
         encryptionCore.setC(this);
         HTTPCore.setC(this);
         sensingCore.setC(this);
         cronCore.setC(this);
 
         try {
+            //So this apparently gets your LAN address, provided there is one
             InetAddress addr = getFirstNonLoopbackAddress(true, false);
             String ip = addr.getHostAddress();
+
+            //this could have been a nonlocal adress, but I'm such a bad person
             String registryUnitIP = "127.0.0.1";
+
             messages = new Messaging(this);
-            jsonReply = HTTPRequest.sendPost("http://" + registryUnitIP, 8383, URLEncoder.encode("ip=" + ip + "&port=8181&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register");
+            jsonReply = HTTPRequest.sendPost(
+                    "http://" + registryUnitIP,
+                    8383,
+                    URLEncoder.encode("ip=" + ip + "&port=8181&services={\"services\":[{\"uri\" : \"/sensors\", \"description\" : \"returns a list of sensors available\"}]}"), "/register");
             //registers itself to the registry unit
 
             if (debug) {
@@ -91,6 +105,7 @@ public class Control {
             obj = new JSONObject(jsonReply);
 
             if (!obj.get("result").equals("success")) {
+                //parsing the json object token by token
                 if (debug) {
                     System.out.println("jsonReply failed " + jsonReply);
                 }
@@ -115,12 +130,14 @@ public class Control {
     }
 
     private synchronized Thread createDropDaemon() {
+        //Creates a thread that drops innactive motes/sensors
         Thread t = new Thread(new Runnable() {
 
             @Override
             public void run() {
                 try {
                     cronCore.attachTo();
+                    //WOW SHINY attaches self to cronCore
                 } catch (Exception ex) {
                     Logger.getLogger(Control.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -130,7 +147,7 @@ public class Control {
                 }
                 while (true) {
                     for (MicazMote m : motesList) {
-
+                        //i'm not going to go through this, it's obvious
                         if (m.getLatestActivity() < Util.getTime() - 10000) {
                             if (debug) {
                                 System.out.println("dropin " + m);
@@ -142,6 +159,7 @@ public class Control {
                         }
                     }
                     for (MicazMote m : toRemove) {
+                        //We have to build the delete statement for the registry unit
                         try {
                             String services = "{\"services\":[";
 
@@ -193,6 +211,7 @@ public class Control {
             @Override
             public void run() {
                 try {
+                    //won't really analyze these, it's pretty self explanatory
                     sensingCore.attachTo();
 
                     boolean found = false;

@@ -10,7 +10,8 @@ package util;
  * @author billaros
  */
 public class Util {
-
+    //Utilities
+    
     public static int sum(int[] array) {
         int summary = 0;
         for (int x : array) {
@@ -31,10 +32,11 @@ public class Util {
         double adc = thermistor;
         double Rthr = 10000 * (1023 - adc) / adc;
         return Rthr;
+        //engineering from analog to digital
     }
 
     public static double a2d2celsius(int reading) {
-
+        //celsious from analog to digital
         double temperature, a, b, c, Rthr;
         a = 0.001307050;
         b = 0.000214381;
@@ -42,10 +44,7 @@ public class Util {
         Rthr = a2d2engi(reading);
         temperature = 1 / (a + b * Math.log(Rthr) + c * Math.pow(Math.log(Rthr), 3));
         temperature -= 273.15; //Convert from Kelvin to Celcius
-       /* printf(
-         “debug:
-         a =  % f b =  % f Rt =  % f temp =  % f\n”, a, b, c,Rt, temperature
-         );*/
+     
         return temperature;
 
     }

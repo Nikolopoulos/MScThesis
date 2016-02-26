@@ -11,6 +11,7 @@ package sensorPlatforms;
  */
 public class MicazMote {
 
+    //This class models a micaz mote
     private int id;
     private int services;
     private boolean tempService = false;
@@ -126,7 +127,7 @@ public class MicazMote {
     public String toString() {
         return id + "\t Micaz provides: " + (tempService ? "temperature service " : "") + (photoService ? "photo service " : "") + (switchService ? "switch service " : "");
     }
-
+    //If i remember correctly the folloing json shit are shitty as shit goes
     public String JSONDescription() {
         //return "{"+id+"\t Micaz provides: " + (tempService?"temperature service ":"")+ (photoService?"photo service ":"") + (switchService?"switch service ":"") ;
         String reply = "{\"ID\":\"" + getId() + "\", \"TemperatureService\":\"" + this.isTempService() + "\", \"LightService\":\"" + this.isPhotoService() + "\", \"SwitchService\":\"" + this.isSwitchService() + "\"} ";

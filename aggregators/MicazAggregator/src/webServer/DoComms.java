@@ -29,7 +29,7 @@ class DoComms implements Runnable {
         this.server = server;
         this.con = c;
     }
-
+    //So server listens for clients, and this class is runnable and executes the communication requests.
     public void run() {
 
         try {

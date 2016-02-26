@@ -31,7 +31,7 @@ public class Server {
 
     public void startServer() {
         Thread serverThread = new Thread(new Runnable() {
-
+            //so very difficult, listens for requests then executes them on another thread
             @Override
             public void run() {
                 try {

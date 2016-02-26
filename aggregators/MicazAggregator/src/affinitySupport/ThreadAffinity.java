@@ -21,20 +21,23 @@ import util.Control;
  * @author cheremin
  * @since 25.10.11, 14:18
  */
+//I have no fucking idea how this works to be 100% honest, but it does
+//Thanks JNA
 public class ThreadAffinity {
 
-    private  final Core[] cores;
+    private final Core[] cores;
     private Control c;
-     {
+
+    {
         final int coresCount = Runtime.getRuntime().availableProcessors();
         cores = new Core[coresCount];
 
         for (int i = 0; i < cores.length; i++) {
-            cores[i] = new Core(i,c);
+            cores[i] = new Core(i, c);
         }
     }
 
-    public  void setCurrentThreadAffinityMask(final long mask) throws Exception {
+    public void setCurrentThreadAffinityMask(final long mask) throws Exception {
         final CLibrary lib = CLibrary.INSTANCE;
         final int cpuMaskSize = Long.SIZE / 8;
         try {
@@ -47,7 +50,7 @@ public class ThreadAffinity {
         }
     }
 
-    public  void setThreadAffinityMask(final long threadID,
+    public void setThreadAffinityMask(final long threadID,
             final long mask) throws Exception {
         final CLibrary lib = CLibrary.INSTANCE;
         final int cpuMaskSize = Long.SIZE / 8;
@@ -65,16 +68,16 @@ public class ThreadAffinity {
         }
     }
 
-    public  Core[] cores() {
+    public Core[] cores() {
         return cores.clone();
     }
 
-    public  Core currentCore() throws Exception {
+    public Core currentCore() throws Exception {
         final int cpuSequence = CLibrary.INSTANCE.sched_getcpu();
         return cores[cpuSequence];
     }
 
-    public  void nice(final int increment) throws Exception {
+    public void nice(final int increment) throws Exception {
         final CLibrary lib = CLibrary.INSTANCE;
         try {
             final int ret = lib.nice(increment);
@@ -88,7 +91,7 @@ public class ThreadAffinity {
 
     private interface CLibrary extends Library {
 
-        public  final CLibrary INSTANCE = (CLibrary) Native.loadLibrary("c", CLibrary.class);
+        public final CLibrary INSTANCE = (CLibrary) Native.loadLibrary("c", CLibrary.class);
 
         public int nice(final int increment) throws Exception;
 
@@ -104,37 +107,11 @@ public class ThreadAffinity {
     }
 
     public ThreadAffinity(Control c) {
-        this.c=c;
-        /*try {
-            final Core currentCore = currentCore();
-        } catch (Exception e) {
-        }
-//        System.out.printf( "currentCore() -> %s\n", currentCore );
-
-//        final int niceRet = lib.nice( -20 );
-//        System.out.printf( "nice -> %d\n", niceRet );
-        for (final Core core : cores()) {
-            new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        core.attachTo();
-                        System.out.printf("currentCore() -> %s\n", currentCore());
-                        for (int i = 0; i < 100; i++) {
-                            System.out.printf("currentCore() -> %s %d\n", currentCore(), i);
-
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }.start();
-
-        }*/
+        this.c = c;
 
     }
 
-    public  int[] parseCoresIndexes(final String str,
+    public int[] parseCoresIndexes(final String str,
             final int[] defaults) throws ParseException {
         final StringTokenizer stok = new StringTokenizer(str, ",");
         final int size = stok.countTokens();
@@ -160,7 +137,7 @@ public class ThreadAffinity {
         return indexes;
     }
 
-    public  Core[] parseCores(final String str,
+    public Core[] parseCores(final String str,
             final int[] defaults) throws ParseException {
         final int[] indexes = parseCoresIndexes(str, defaults);
         final Core[] cores = new Core[indexes.length];
